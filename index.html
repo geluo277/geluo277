@@ -1,319 +1,219 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>我的名片</title>
-  <style>
-    :root {
-      --primary: #6366f1;
-      --primary-dark: #4f46e5;
-      --ink: #1e293b;
-      --muted: #64748b;
-      --radius: 24px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>格洛 - 分享</title>
+    <style>
+        /* 基础重置与背景 */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2; /* 浅灰色背景 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+        .container {
+            width: 100%;
+            max-width: 480px; /* 限制最大宽度，适配电脑端预览 */
+            padding-top: 50px;
+            padding-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
 
-    html, body { min-height: 100%; }
+        /* 头像区域 */
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background-color: #8a2be2; /* 紫色 */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(138, 43, 226, 0.2);
+        }
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 28px 18px;
-      color: var(--ink);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      background: linear-gradient(135deg, #1e1b4b, #312e81 40%, #1e3a8a 70%, #4c1d95);
-      background-size: 300% 300%;
-      animation: bgShift 20s ease infinite;
-      position: relative;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
+        /* 名字与认证图标 */
+        .name-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 15% 20%, rgba(129, 140, 248, .45), transparent 45%),
-        radial-gradient(circle at 85% 15%, rgba(56, 189, 248, .32), transparent 45%),
-        radial-gradient(circle at 50% 105%, rgba(192, 132, 252, .42), transparent 55%);
-    }
+        .name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #222;
+            margin: 0;
+        }
 
-    @keyframes bgShift {
-      0%, 100% { background-position: 0% 50%; }
-      50%      { background-position: 100% 50%; }
-    }
+        /* 蓝色认证SVG图标 */
+        .verified-icon {
+            width: 20px;
+            height: 20px;
+            fill: #1da1f2; /* 经典推特蓝 */
+        }
 
-    .card {
-      position: relative;
-      z-index: 1;
-      width: min(100%, 430px);
-      background: rgba(255, 255, 255, .88);
-      backdrop-filter: blur(22px) saturate(160%);
-      -webkit-backdrop-filter: blur(22px) saturate(160%);
-      border: 1px solid rgba(255, 255, 255, .55);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: 0 30px 70px -20px rgba(2, 6, 23, .65);
-      animation: cardIn .9s cubic-bezier(.16, 1, .3, 1) both;
-      transition: transform .4s ease, box-shadow .4s ease;
-    }
+        /* 简介文字 */
+        .description {
+            font-size: 14px;
+            color: #444;
+            text-align: center;
+            line-height: 1.6;
+            margin: 0 0 35px 0;
+            padding: 0 10px;
+        }
 
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 44px 90px -20px rgba(2, 6, 23, .72);
-    }
+        /* 链接列表容器 */
+        .links-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* 卡片之间的间距 */
+        }
 
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(26px) scale(.97); }
-      to   { opacity: 1; transform: none; }
-    }
+        /* 单个链接卡片 */
+        .link-card {
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 18px 20px;
+            text-decoration: none; /* 去除下划线 */
+            color: #222;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* 微微的阴影 */
+            transition: background-color 0.2s; /* 点击反馈动画 */
+        }
 
-    .banner {
-      height: 118px;
-      position: relative;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6 55%, #06b6d4);
-    }
+        /* 点击时的反馈 */
+        .link-card:active {
+            background-color: #f8f8f8;
+        }
 
-    .banner::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 25% 15%, rgba(255, 255, 255, .5), transparent 55%),
-        radial-gradient(circle at 85% 95%, rgba(255, 255, 255, .25), transparent 50%);
-    }
+        /* 左侧链接图标 */
+        .link-icon {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: #333;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
 
-    .avatar {
-      width: 108px;
-      height: 108px;
-      margin: -54px auto 0;
-      position: relative;
-      z-index: 2;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      border: 5px solid #fff;
-      background: linear-gradient(135deg, #818cf8, #c084fc 60%, #38bdf8);
-      color: #fff;
-      font-size: 38px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      box-shadow: 0 12px 30px -6px rgba(99, 102, 241, .65);
-    }
+        /* 中间文字部分 */
+        .link-text {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.4;
+            padding: 0 10px;
+        }
 
-    .content {
-      padding: 18px 30px 32px;
-      text-align: center;
-    }
+        /* 右侧三个点 */
+        .menu-dots {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex-shrink: 0;
+        }
 
-    .name {
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: .5px;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed 60%, #0ea5e9);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
+        .menu-dots span {
+            width: 4px;
+            height: 4px;
+            background-color: #666;
+            border-radius: 50%;
+        }
+    </style>
+</head><body>
 
-    .role {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 5px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--primary-dark);
-      background: rgba(99, 102, 241, .12);
-      border: 1px solid rgba(99, 102, 241, .25);
-      border-radius: 999px;
-    }
+    <div class="container">
+        <!-- 头部个人信息 -->
+        <div class="avatar">彁</div>
+        
+        <div class="name-container">
+            <h1 class="name">格洛</h1>
+            <!-- 认证蓝V图标 -->
+            <svg class="verified-icon" viewBox="0 0 24 24">
+                <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.79-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.733 2.75 1.853 3.462-.06.28-.09.572-.09.87 0 2.21 1.71 3.998 3.918 3.998.47 0 .92-.084 1.336-.25C9.182 21.585 10.49 22.5 12 22.5s2.816-.917 3.337-2.25c.416.165.866.25 1.336.25 2.21 0 3.918-1.79 3.918-4 0-.298-.03-.59-.09-.87 1.12-.712 1.853-2.002 1.853-3.462zm-12.11 4.5l-4.03-4.03 1.414-1.414 2.616 2.616 5.656-5.656 1.414 1.414-7.07 7.07z"/>
+            </svg>
+        </div>
 
-    .bio {
-      margin-top: 16px;
-      font-size: 14.5px;
-      line-height: 1.8;
-      color: var(--muted);
-    }
+        <p class="description">
+            纯素材和软件分享<br>
+            请勿商用！
+        </p>
 
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 20px;
-    }
+        <!-- 链接列表 -->
+        <div class="links-container">
+            
+            <!-- 链接1 -->
+            <a href="https://1841509350.share.123pan.cn/123pan/UubDTd-iFlYh?pwd=ge10#" class="link-card">
+                <svg class="link-icon" viewBox="0 0 24 24">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                <span class="link-text"图片素材<br>图片素材</span>
+                <div class="menu-dots"><span></span><span></span><span></span></div>
+            </a>
 
-    .tag {
-      padding: 6px 13px;
-      font-size: 12.5px;
-      color: #4338ca;
-      background: #eef2ff;
-      border: 1px solid #e0e7ff;
-      border-radius: 8px;
-      transition: transform .25s ease, background .25s ease;
-    }
+            <!-- 链接2 -->
+            <a href="#" class="link-card">
+                <svg class="link-icon" viewBox="0 0 24 24">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                <span class="link-text">滚木</span>
+                <div class="menu-dots"><span></span><span></span><span></span></div>
+            </a>
 
-    .tag:hover {
-      transform: translateY(-2px);
-      background: #e0e7ff;
-    }
+            <!-- 链接3 -->
+            <a href="#" class="link-card">
+                <svg class="link-icon" viewBox="0 0 24 24">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                <span class="link-text">滚木</span>
+                <div class="menu-dots"><span></span><span></span><span></span></div>
+            </a>
 
-    .actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 26px;
-    }
+            <!-- 链接4 -->
+            <a href="#" class="link-card">
+                <svg class="link-icon" viewBox="0 0 24 24">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                <span class="link-text">滚木</span>
+                <div class="menu-dots"><span></span><span></span><span></span></div>
+            </a>
 
-    .btn {
-      flex: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 16px;
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 12px;
-      text-decoration: none;
-      border: 1px solid transparent;
-      transition: transform .25s ease, box-shadow .25s ease,
-                  background .25s ease, border-color .25s ease, color .25s ease;
-    }
+            <!-- 链接5 -->
+            <a href="#" class="link-card">
+                <svg class="link-icon" viewBox="0 0 24 24">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                <span class="link-text">滚木</span>
+                <div class="menu-dots"><span></span><span></span><span></span></div>
+            </a>
 
-    .btn svg { width: 16px; height: 16px; }
-
-    .btn--primary {
-      color: #fff;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      box-shadow: 0 10px 22px -8px rgba(99, 102, 241, .9);
-    }
-
-    .btn--primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 16px 28px -8px rgba(99, 102, 241, .95);
-    }
-
-    .btn--ghost {
-      color: #475569;
-      background: #fff;
-      border-color: #e2e8f0;
-    }
-
-    .btn--ghost:hover {
-      transform: translateY(-2px);
-      border-color: #c7d2fe;
-      color: var(--primary-dark);
-    }
-
-    .btn:active { transform: translateY(0) scale(.98); }
-
-    .socials {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      margin-top: 22px;
-      padding-top: 20px;
-      border-top: 1px solid #eef2f7;
-    }
-
-    .socials a {
-      width: 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      color: #64748b;
-      background: #f1f5f9;
-      transition: all .25s ease;
-    }
-
-    .socials a:hover {
-      color: #fff;
-      transform: translateY(-3px);
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      box-shadow: 0 10px 18px -8px rgba(99, 102, 241, .9);
-    }
-
-    .socials svg { width: 18px; height: 18px; }
-
-    @media (max-width: 420px) {
-      .banner   { height: 100px; }
-      .avatar   { width: 92px; height: 92px; margin-top: -46px; font-size: 32px; }
-      .content  { padding: 16px 22px 28px; }
-      .name     { font-size: 22px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .001ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: .001ms !important;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <main class="card">
-    <div class="banner"></div>
-    <div class="avatar">名</div>
-
-    <div class="content">
-      <h1 class="name">格洛</h1>
-      <div class="role">素材分享</div>
-
-      <p class="bio">
-        仅用来分享素材，请勿商用
-      </p>
-
-      <div class="tags">
-        <span class="tag">HTML / CSS</span>
-        <span class="tag">JavaScript</span>
-        <span class="tag">Vue</span>
-        <span class="tag">UI 设计</span>
-      </div>
-
-      <div class="actions">
-        <a class="btn btn--primary" href="mailto:you@example.com">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="5" width="18" height="14" rx="2.5"/>
-            <path d="m3.5 7 8.5 6 8.5-6"/>
-          </svg>
-          发邮件
-        </a>
-        <a class="btn btn--ghost" href="#">查看作品集</a>
-      </div>
-
-      <div class="socials">
-        <a href="mailto:you@example.com" aria-label="邮箱" title="邮箱">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="5" width="18" height="14" rx="2.5"/>
-            <path d="m3.5 7 8.5 6 8.5-6"/>
-          </svg>
-        </a>
-        <a href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 .5a12 12 0 0 0-3.79 23.4c.6.1.82-.26.82-.58v-2c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.62-2.81 5.64-5.49 5.94.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.58A12 12 0 0 0 12 .5z"/>
-          </svg>
-        </a>
-        <a href="tel:+8613800000000" aria-label="电话" title="电话">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
-          </svg>
-        </a>
-      </div>
+        </div>
     </div>
-  </main>
 
 </body>
 </html>
